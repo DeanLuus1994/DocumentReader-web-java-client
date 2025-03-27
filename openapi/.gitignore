@@ -1,0 +1,10 @@
+.idea
+document-reader-api-doc.html
+/.openapi-generator/VERSION
+/.openapi-generator/FILES
+/openapi.json
+document-reader-static-doc.html
+*.DS_Store
+*.txt
+*.strings
+*.json

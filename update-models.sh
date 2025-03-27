@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DOCS_DEFINITION_FOLDER="${PWD}/../DocumentReader-web-openapi" \
+DOCS_DEFINITION_FOLDER="${PWD}/openapi" \
 \
 && ENUM_MAPPINGS="MeasureSystem=Integer,TextFieldType=Integer,GraphicFieldType=Integer,Scenario=String,DocumentFormat=Integer,\
 Light=Integer,Result=Integer,VerificationResult=Integer,RfidLocation=Integer,\

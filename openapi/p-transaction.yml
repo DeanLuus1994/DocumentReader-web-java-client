@@ -1,0 +1,340 @@
+openapi: 3.0.3
+info:
+  version: 6.9.0
+  title: Regula Document Reader Web API
+
+paths:
+  /transaction/{transactionId}/process:
+    post:
+      parameters:
+        - in: path
+          name: transactionId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Transaction id
+      summary: Reprocess
+      tags:
+        - transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionProcessRequest"
+        required: true
+      responses:
+        "200":
+          description: "Transaction Process result"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  OutData:
+                    $ref: '#/components/schemas/OutData'
+                  InData:
+                    $ref: '#/components/schemas/InData'
+                  tag:
+                    type: string
+                  transactionId:
+                    type: string
+                    format: uuid
+        "400":
+          description: "Bad request. Check your input data."
+        "403":
+          description: "Bad license. Either server or request does not contain valid license."
+
+  /transaction/{transactionId}:
+    get:
+      parameters:
+        - in: path
+          name: transactionId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Transaction id
+      summary: Get Reprocess transaction data
+      tags:
+        - transaction
+      responses:
+        "200":
+          description: "Reprocess transaction data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionProcessGetResponse'
+        "400":
+          description: "Bad request. Check your input data."
+        "403":
+          description: "Bad license. Either server or request does not contain valid license."
+
+  /transaction/{transactionId}/results:
+    get:
+      parameters:
+        - in: path
+          name: transactionId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Transaction id
+        - in: query
+          name: withImages
+          schema:
+            type: boolean
+            enum:
+              - true
+              - false
+          description: With base64 images or url
+      summary: Get Reprocess transaction result
+      tags:
+        - transaction
+      responses:
+        "200":
+          description: "Transaction data"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ChipPage:
+                    $ref: "./common.yml#/components/schemas/RfidLocation"
+                  ProcessingFinished:
+                    $ref: "./p-process.yml#/components/schemas/ProcessingStatus"
+                  ContainerList:
+                    $ref: "./rt.yml#/components/schemas/ContainerList"
+                  TransactionInfo:
+                    $ref: "./p-process.yml#/components/schemas/TransactionInfo"
+                  log:
+                    description: "Base64 encoded transaction processing log"
+                    type: string
+                  passBackObject:
+                    type: object
+                    description: "Free-form object provided in request. See passBackObject property of ProcessRequest."
+                    additionalProperties: true
+                  morePagesAvailable:
+                    type: integer
+                  elapsedTime:
+                    type: integer
+                    description: "Time the document processing has taken, ms."
+                  CoreLibResultCode:
+                    type: integer
+
+        "400":
+          description: "Bad request. Check your input data."
+        "403":
+          description: "Bad license. Either server or request does not contain valid license."
+  /transaction/{transactionId}/file:
+    get:
+      parameters:
+        - in: path
+          name: transactionId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Transaction id
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+          description: "File name"
+      summary: "Get Reprocess transaction file"
+      tags:
+        - transaction
+      responses:
+        "200":
+          description: "Binary file"
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: "File not found"
+  /tag/{tagId}:
+    delete:
+      parameters:
+        - in: path
+          name: tagId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Tag id
+      summary: Delete Reprocess transactions by tag
+      tags:
+        - transaction
+      responses:
+        "204":
+          description: "Transactions deleted"
+          content:
+            application/json:
+              schema: {}
+        "400":
+          description: "Bad request. Check your input data."
+        "403":
+          description: "Bad license. Either server or request does not contain valid license."
+  /tag/{tagId}/transactions:
+    get:
+      parameters:
+        - in: path
+          name: tagId
+          schema:
+            type: string
+          required: true
+          description: Tag id
+      summary: Get transactions by tag
+      tags:
+        - transaction
+      responses:
+        "200":
+          description: "Transactions list by tag"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListTransactionsByTagResponse'
+        "400":
+          description: "Bad request. Check your input data."
+        "403":
+          description: "Bad license. Either server or request does not contain valid license."
+
+components:
+  schemas:
+    ListTransactionsByTagResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GetTransactionsByTagResponse'
+        metadata:
+          type: object
+          additionalProperties: true
+    GetTransactionsByTagResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Transaction id"
+        state:
+          type: integer
+          description: "Transaction status"
+        updatedAt:
+          type: string
+          format: 'date-time'
+          description: "Last time updated"
+    TransactionProcessGetResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        tag:
+          type: string
+        outData:
+          $ref: '#/components/schemas/OutData'
+        inData:
+          $ref: '#/components/schemas/InData'
+
+    OutData:
+      type: object
+      properties:
+        url:
+          description: "Response url"
+          type: string
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/OutDataTransactionImagesFieldValue"
+
+    InData:
+      type: object
+      properties:
+        video:
+          description: "Video"
+          type: object
+          properties:
+            metadata:
+              type: object
+              additionalProperties: true
+              description: "A free-form object containing video's extended attributes."
+            url:
+              description: "Video url"
+              type: string
+        images:
+          type: array
+          items:
+            $ref: "#/components/schemas/InDataTransactionImagesFieldValue"
+
+    TransactionProcessRequest:
+      type: object
+      properties:
+        processParam:
+          $ref: "./p-process.yml#/components/schemas/ProcessParams"
+        List:
+          type: array
+          items:
+            $ref: "./p-process.yml#/components/schemas/ProcessRequestImage"
+        livePortrait:
+          type: string
+          format: base64
+          example: "Base64 encoded data"
+          description: "Live portrait photo"
+        extPortrait:
+          type: string
+          format: base64
+          example: "Base64 encoded data"
+          description: "Portrait photo from an external source"
+        ContainerList:
+          $ref: "./rt.yml#/components/schemas/ContainerList"
+        systemInfo:
+          $ref: "./p-process.yml#/components/schemas/ProcessSystemInfo"
+        passBackObject:
+          type: object
+          description: "Free-form object to be included in response. Must be object, not list or simple value.
+                Do not affect document processing. Use it freely to pass your app params. Stored in process logs."
+          additionalProperties: true
+        dtc:
+          type: string
+          description: "Digital Travel Credential (DTC-VC) data in base64 format for processing"
+      required:
+        - processParam
+
+    InDataTransactionImagesFieldValue:
+      type: object
+      properties:
+        light:
+          $ref: "./common.yml#/components/schemas/Light"
+        listIdx:
+          type: integer
+        pageIdx:
+          $ref: "./common.yml#/components/schemas/PageIndex"
+        url:
+          type: string
+          description: "Image url"
+
+    OutDataTransactionImagesFieldValue:
+      type: object
+      properties:
+        fieldType:
+          $ref: "./e-graphic-field-type.yml#/components/schemas/GraphicFieldType"
+        light:
+          $ref: "./common.yml#/components/schemas/Light"
+        listIdx:
+          type: integer
+        pageIdx:
+          $ref: "./common.yml#/components/schemas/PageIndex"
+        url:
+          type: string
+          description: "Image url"
+
+    TransactionScenarioRequest:
+      type: object
+      properties:
+        scenario:
+           $ref: "./common.yml#/components/schemas/Scenario"

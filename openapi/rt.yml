@@ -1,0 +1,217 @@
+openapi: 3.0.3
+components:
+  schemas:
+
+    ContainerType:
+      type: integer
+      description: "Same as Result type, but used for safe parsing of not-described values. See Result type."
+      default: 0
+
+    Result:
+      type: integer
+      enum:
+        - 1
+        - 3
+        - 5
+        - 6
+        - 8
+        - 9
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+        - 30
+        - 33
+        - 34
+        - 36
+        - 37
+        - 39
+        - 49
+        - 50
+        - 85
+        - 101
+        - 102
+        - 103
+        - 104
+        - 105
+        - 109
+      x-enum-descriptions:
+        - "Contains cropped and rotated with perspective compensation image of document. Single input image can contain multiple document side/pages, which will be returned as separated results. Most of coordinates in other types defined on that image"
+        - "Contains MRZ OCR results"
+        - "Contains raw information about barcodes on the input image"
+        - "Contains cropped graphic fields from Visual zone"
+        - "Contains list of document type candidates with their probabilities and descriptions"
+        - "Contains description of determined document type, if any"
+        - "Contains lexical data analysis results that allow you to compare MRZ OCR results, Visual zone OCR results, barcodes and RFID chip data for an additional assessment of the authenticity of the document (this is an old format, better use TEXT type)"
+        - "Contains raw uncropped images"
+        - "Contains Visual zone OCR results"
+        - "Contains barcode parsing result with text fields"
+        - "Contains barcode parsing result with graphic fields"
+        - "Contains result of document authenticity checks"
+        - "Contains image quality check results"
+        - "Contains check statuses with details, grouped by source"
+        - "Contains result of portraits comparison"
+        - "Contains document textual fields from all sources (mrz, rfid, visual, barcode) with validity and cross-source compare checks"
+        - "Contains images from all document sources (mrz, rfid, visual, barcode)"
+        - "Contains result of fingerprints comparison"
+        - "Contains encrypted ResultContainerList"
+        - "Contains license"
+        - "Contains information about document position on the input image, its center, angle, etc"
+        - "Contains RFID raw data"
+        - "Contains RFID text results"
+        - "Contains RFID graphic results"
+        - "Contains RFID binary data"
+        - "Contains RFID original graphics data"
+        - "Digital Travel Credential data"
+      x-enum-varnames:
+        - "DOCUMENT_IMAGE"
+        - "MRZ_TEXT"
+        - "BARCODES"
+        - "VISUAL_GRAPHICS"
+        - "DOCUMENT_TYPE_CANDIDATES"
+        - "DOCUMENT_TYPE"
+        - "LEXICAL_ANALYSIS"
+        - "RAW_UNCROPPED_IMAGE"
+        - "VISUAL_TEXT"
+        - "BARCODE_TEXT"
+        - "BARCODE_GRAPHICS"
+        - "AUTHENTICITY"
+        - "IMAGE_QUALITY"
+        - "STATUS"
+        - "PORTRAIT_COMPARISON"
+        - "TEXT"
+        - "IMAGES"
+        - "FINGERPRINT_COMPARISON"
+        - "ENCRYPTED_RCL"
+        - "LICENSE"
+        - "DOCUMENT_POSITION"
+        - "RFID_RAW_DATA"
+        - "RFID_TEXT"
+        - "RFID_GRAPHICS"
+        - "RFID_BINARY_DATA"
+        - "RFID_ORIGINAL_GRAPHICS"
+        - "DTC_VC"
+
+    ResultItem:
+      type: object
+      description: "Common fields for all result objects"
+      required:
+        - result_type
+      properties:
+        buf_length:
+          type: integer
+        light:
+          type: integer
+        list_idx:
+          type: integer
+        page_idx:
+          type: integer
+        result_type:
+          $ref: "#/components/schemas/ContainerType"
+      discriminator:
+        propertyName: result_type
+        mapping:
+          1: "DocumentImageResult"
+          3: "TextDataResult"
+          5: "DocBarCodeInfo"
+          6: "GraphicsResult"
+          8: "DocumentTypesCandidatesResult"
+          9: "ChosenDocumentTypeResult"
+          15: "LexicalAnalysisResult"
+          16: "DocumentImageResult"
+          17: "TextDataResult"
+          18: "TextDataResult"
+          19: "GraphicsResult"
+          20: "AuthenticityResult"
+          30: "ImageQualityResult"
+          33: "StatusResult"
+          34: "AuthenticityResult"
+          36: "TextResult"
+          37: "ImagesResult"
+          39: "AuthenticityResult"
+          49: "EncryptedRCLResult"
+          50: "LicenseResult"
+          85: "DocumentPositionResult"
+          102: "TextDataResult"
+          103: "GraphicsResult"
+          109: "ByteArrayResult"
+
+    ContainerList:
+      type: object
+      description: "List with various objects, containing processing results"
+      required:
+        - List
+      properties:
+        Count:
+          type: integer
+          description: "Length of list (Count for items)"
+        List:
+          type: array
+          items:
+            anyOf:
+              - $ref: "#/components/schemas/StatusResult"
+              - $ref: "#/components/schemas/TextResult"
+              - $ref: "#/components/schemas/DocumentImageResult"
+              - $ref: "#/components/schemas/ImagesResult"
+              - $ref: "#/components/schemas/ChosenDocumentTypeResult"
+              - $ref: "#/components/schemas/DocumentTypesCandidatesResult"
+              - $ref: "#/components/schemas/TextDataResult"
+              - $ref: "#/components/schemas/GraphicsResult"
+              - $ref: "#/components/schemas/LexicalAnalysisResult"
+              - $ref: "#/components/schemas/AuthenticityResult"
+              - $ref: "#/components/schemas/ImageQualityResult"
+              - $ref: "#/components/schemas/DocumentPositionResult"
+              - $ref: "#/components/schemas/DocBarCodeInfo"
+              - $ref: "#/components/schemas/LicenseResult"
+              - $ref: "#/components/schemas/EncryptedRCLResult"
+              - $ref: "#/components/schemas/ByteArrayResult"
+
+    DocumentPositionResult:
+      $ref: "./rt-document-position.yml#/components/schemas/DocumentPositionResult"
+
+    DocumentImageResult:
+      $ref: "./rt-raw-image.yml#/components/schemas/DocumentImageResult"
+
+    StatusResult:
+      $ref: "./rt-status.yml#/components/schemas/StatusResult"
+
+    TextResult:
+      $ref: "./rt-text.yml#/components/schemas/TextResult"
+
+    ImagesResult:
+      $ref: "./rt-images.yml#/components/schemas/ImagesResult"
+
+    LexicalAnalysisResult:
+      $ref: "./rt-ocr-lexical-analisis.yml#/components/schemas/LexicalAnalysisResult"
+
+    TextDataResult:
+      $ref: "./rt-text-data.yml#/components/schemas/TextDataResult"
+
+    GraphicsResult:
+      $ref: "./rt-image-data.yml#/components/schemas/GraphicsResult"
+
+    ByteArrayResult:
+      $ref: "./rt-byte-array-data.yml#/components/schemas/ByteArrayResult"
+
+    DocumentTypesCandidatesResult:
+      $ref: "./rt-doc-type-old.yml#/components/schemas/DocumentTypesCandidatesResult"
+
+    ChosenDocumentTypeResult:
+      $ref: "./rt-doc-type-old.yml#/components/schemas/ChosenDocumentTypeResult"
+
+    AuthenticityResult:
+      $ref: "./rt-authenticity.yml#/components/schemas/AuthenticityResult"
+
+    ImageQualityResult:
+      $ref: "./rt-image-quality.yml#/components/schemas/ImageQualityResult"
+
+    DocBarCodeInfo:
+      $ref: "./rt-barcodes.yml#/components/schemas/DocBarCodeInfo"
+
+    LicenseResult:
+      $ref: "./rt-license.yml#/components/schemas/LicenseResult"
+
+    EncryptedRCLResult:
+      $ref: "./rt-encrypted-rcl.yml#/components/schemas/EncryptedRCLResult"

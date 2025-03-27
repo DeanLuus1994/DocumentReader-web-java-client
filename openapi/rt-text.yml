@@ -1,0 +1,179 @@
+openapi: 3.0.3
+components:
+  schemas:
+
+    TextResult:
+      title: "Text"
+      allOf:
+        - type: object
+          required:
+            - Text
+          properties:
+            Text:
+              $ref: "#/components/schemas/Text"
+        - $ref: "./rt.yml#/components/schemas/ResultItem"
+
+    Text:
+      type: object
+      description: "Contains all document text fields data with validity and cross-source compare checks"
+      required:
+        - status
+        - validityStatus
+        - comparisonStatus
+        - fieldList
+        - availableSourceList
+      properties:
+        status:
+          description: "Overall status of all checks from all text fields"
+          $ref: "./common.yml#/components/schemas/CheckResult"
+        validityStatus:
+          description: "Overall status of validity from all text fields from all sources"
+          $ref: "./common.yml#/components/schemas/CheckResult"
+        comparisonStatus:
+          description: "Overall status of data comparison from different sources for each text field"
+          $ref: "./common.yml#/components/schemas/CheckResult"
+        fieldList:
+          type: array
+          items:
+            $ref: "#/components/schemas/TextField"
+        availableSourceList:
+          type: array
+          items:
+            $ref: "#/components/schemas/TextAvailableSource"
+
+    TextField:
+      type: object
+      required:
+        - fieldType
+        - fieldName
+        - status
+        - validityStatus
+        - comparisonStatus
+        - value
+        - valueList
+        - validityList
+        - comparisonList
+      properties:
+        fieldType:
+          $ref: "./e-text-field-type.yml#/components/schemas/TextFieldType"
+        fieldName:
+          description: "Field name. Only use to search values for fields with fieldType=50(other). In general, use fieldType for lookup."
+          type: string
+        lcid:
+          $ref: "./e-lcid.yml#/components/schemas/LCID"
+        status:
+          description: "Overall status of all checks from all values"
+          $ref: "./common.yml#/components/schemas/CheckResult"
+        validityStatus:
+          description: "Overall status of validity from all values"
+          $ref: "./common.yml#/components/schemas/CheckResult"
+        comparisonStatus:
+          description: "Overall status of data comparison from different sources"
+          $ref: "./common.yml#/components/schemas/CheckResult"
+        value:
+          description: "The most confidence value, selected from valueList"
+          type: string
+        valueList:
+          type: array
+          items:
+            $ref: "#/components/schemas/TextFieldValue"
+        validityList:
+          description: "Validity of all field values for given source.
+          If there are two values on different pages for one field-source pair,
+          then validity also will include logical match checking.
+          If such values do not match, validity will return error."
+          type: array
+          items:
+            $ref: "#/components/schemas/SourceValidity"
+        comparisonList:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrossSourceValueComparison"
+
+    # todo originalValidity очн путает, может в validityList сделать validityList = originalValidity && validityList
+    TextFieldValue:
+      type: object
+      required:
+        - value
+        - pageIndex
+        - source
+      properties:
+        source:
+          $ref: "./common.yml#/components/schemas/Source"
+        value:
+          description: "Parsed/processed value. Date format converted for output, delimiters removed"
+          type: string
+        originalValue:
+          description: "Original value as seen in the document"
+          type: string
+        originalSymbols:
+          type: array
+          items:
+            $ref: "#/components/schemas/OriginalSymbol"
+        pageIndex:
+          $ref: "./common.yml#/components/schemas/PageIndex"
+        probability:
+          description: "Min recognition probability. Combined minimum probability from single characters probabilities"
+          type: integer
+          minimum: 0
+          maximum: 100
+        fieldRect:
+          description: "Only for visual and mrz results. Coordinates of the rectangle region on a document image(result type 1). Represented by two points - (left, top) + (right, bottom)"
+          $ref: "./common.yml#/components/schemas/RectangleCoordinates"
+        rfidOrigin:
+          description: "Only for rfid images. Text location in rfid chip."
+          $ref: "./common.yml#/components/schemas/RfidOrigin"
+
+    OriginalSymbol:
+      type: object
+      properties:
+        code:
+          description: "Unicode symbol code"
+          type: integer
+          format: int64
+        probability:
+          description: "Probability of correctness reading of a single character"
+          type: integer
+          minimum: 0
+          maximum: 100
+        rect:
+          $ref: "./common.yml#/components/schemas/RectangleCoordinates"
+
+    SourceValidity:
+      type: object
+      required:
+        - source
+        - status
+      properties:
+        source:
+          $ref: "./common.yml#/components/schemas/Source"
+        status:
+          $ref: "./common.yml#/components/schemas/CheckResult"
+
+    CrossSourceValueComparison:
+      type: object
+      required:
+        - sourceLeft
+        - sourceRight
+        - status
+      properties:
+        sourceLeft:
+          $ref: "./common.yml#/components/schemas/Source"
+        sourceRight:
+          $ref: "./common.yml#/components/schemas/Source"
+        status:
+          $ref: "./common.yml#/components/schemas/CheckResult"
+
+    TextAvailableSource:
+      type: object
+      required:
+        - source
+        - validityStatus
+      properties:
+        source:
+          $ref: "./common.yml#/components/schemas/Source"
+        validityStatus:
+          description: "Overall status of validity from all fields for given source"
+          $ref: "./common.yml#/components/schemas/CheckResult"
+        containerType:
+          $ref: "./rt.yml#/components/schemas/ContainerType"

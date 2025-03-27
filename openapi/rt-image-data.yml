@@ -1,0 +1,52 @@
+openapi: 3.0.3
+components:
+  schemas:
+
+    GraphicsResult:
+      title: "Graphics (legacy)"
+      description: "Graphic fields extracted from one of the document sources.
+      Returns separate results for each provided page."
+      required:
+        - DocGraphicsInfo
+      allOf:
+        - type: object
+          properties:
+            DocGraphicsInfo:
+              $ref: "#/components/schemas/GraphicFieldsList"
+        - $ref: "./rt.yml#/components/schemas/ResultItem"
+
+    GraphicFieldsList:
+      type: object
+      required:
+        - pArrayFields
+      properties:
+        pArrayFields:
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphicField"
+
+    GraphicField:
+      type: object
+      required:
+        - FieldType
+        - image
+      properties:
+        FieldType:
+          $ref: "./e-graphic-field-type.yml#/components/schemas/GraphicFieldType"
+        image:
+          $ref: "./common.yml#/components/schemas/ImageData"
+        FieldRect:
+          description: "Coordinates of the graphic field in the normalized image of the document"
+          $ref: "./common.yml#/components/schemas/RectangleCoordinates"
+        RFID_OriginDG:
+          description: "Source data group file. Only for Result.RFID_GRAPHICS result."
+          type: integer
+        RFID_OriginDGTag:
+          description: "Index of the source record of the image with biometric information in the information data group. Only for Result.RFID_GRAPHICS result."
+          type: integer
+        RFID_OriginTagEntry:
+          type: integer
+          description: "Index of the template in the record with biometric data. Only for Result.RFID_GRAPHICS result."
+        RFID_OriginEntryView:
+          type: integer
+          description: "Index of the variant of the biometric data template. Only for Result.RFID_GRAPHICS result."

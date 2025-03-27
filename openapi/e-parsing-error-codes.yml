@@ -1,0 +1,387 @@
+openapi: 3.0.3
+components:
+  schemas:
+    ParsingErrorCodes:
+      type: integer
+      description: "The enumeration contains error codes that can return during the RFID chip processing."
+      enum:
+        - 1
+        - -2147483647
+        - -2147483646
+        - -2147483645
+        - -2147483640
+        - -2147483639
+        - -2147483638
+        - -2147483631
+        - -2147483629
+        - -2147483628
+        - -2147483627
+        - -2147483626
+        - -2147483630
+        - -2147483625
+        - -2147483624
+        - -2147483623
+        - -2147483622
+        - -2147483621
+        - -2147483620
+        - -2147483619
+        - -2147483618
+        - -2147483617
+        - -2147483616
+        - -2147483615
+        - -2147483614
+        - -2147483613
+        - -2147483612
+        - -2147483611
+        - -2147483610
+        - -2147483609
+        - -2147483600
+        - -2147483599
+        - -2147483598
+        - -2147483597
+        - -2147483596
+        - -2147483594
+        - -2147483595
+        - -2147483568
+        - -2147483567
+        - -2147483566
+        - -2147483565
+        - -2147483564
+        - -2147483563
+        - -2147483562
+        - -2147483561
+        - -2147483560
+        - -2147483559
+        - -2147483558
+        - -2147483536
+        - -2147483535
+        - -2130706415
+        - -2130706400
+        - -2130706399
+        - -2130706398
+        - -2130706397
+        - -2130706396
+        - -2130706395
+        - -2130706394
+        - -2130706393
+        - -2130706392
+        - -2130706391
+        - -2130706390
+        - -2130706389
+        - -2130706388
+        - -2130706387
+        - -2130706386
+        - -2130706385
+        - -2130706384
+        - -2130706383
+        - -2130706382
+        - -2130706381
+        - -2130706380
+        - -2130706379
+        - -2130706378
+        - -2130706377
+        - -2130706376
+        - -2130706368
+        - -2130706367
+        - -2130706366
+        - -2130706365
+        - -2130706364
+        - -2130706363
+        - -2130706352
+        - -2130706351
+        - -2130706350
+        - -2130706349
+        - -2130706348
+        - -2130706347
+        - -2130706346
+        - -2130706345
+        - -2130706320
+        - -2130706319
+        - -2130706318
+        - -2130706336
+        - -2130706334
+        - -2130706333
+        - -2130706332
+        - -2130706331
+        - -2130706080
+        - -2130706079
+        - -2130706078
+        - -2130706077
+        - -2130706076
+        - -2130706075
+        - -2130706074
+        - -2130706073
+        - -2130706072
+        - -2130706071
+        - -2130706070
+        - -2130705920
+        - -2130705919
+        - -2130705918
+        - -2130705917
+        - -2130705916
+        - -2130705915
+        - -2130705664
+        - -2130705663
+        - -2130705662
+        - -2130705661
+        - -2130705660
+        - -2130705659
+        - -2130705658
+        - -2130705657
+        - -2130705656
+        - -2130705655
+        - -2130705654
+      x-enum-descriptions:
+        - "OK"
+        - "ASN: Incorrect data"
+        - "ASN: Not enough data"
+        - "ASN: Contents unexpected data"
+        - "ASN Signed data: Incorrect data"
+        - "ASN Signed data: Encap contents incorrect data"
+        - "ASN Signed data: Version incorrect data"
+        - "ASN Signed data: Digest algorithms incorrect data"
+        - "ASN LDS object: Incorrect data"
+        - "ASN LDS object: Version incorrect data"
+        - "ASN LDS object: Digest algorithm incorrect data"
+        - "ASN LDS object: DG hashes incorrect data"
+        - "ASN LDS object: Version info incorrect data"
+        - "ASN Certificate: Incorrect data"
+        - "ASN Certificate: Version incorrect data"
+        - "ASN Certificate: SN incorrect data"
+        - "ASN Certificate: Signature incorrect data"
+        - "ASN Certificate: Issuer incorrect data"
+        - "ASN Certificate: Validity incorrect data"
+        - "ASN Certificate: Subject incorrect data"
+        - "ASN Certificate: Subject PK incorrect data"
+        - "ASN Certificate: Extensions incorrect data"
+        - "ASN Signer info: Incorrect data"
+        - "ASN Signer info: Version incorrect data"
+        - "ASN Signer info: SID incorrect data"
+        - "ASN Signer info: Digest algorithms incorrect data"
+        - "ASN Signer info: Signed attributes incorrect data"
+        - "ASN Signer info: Sign algorithms incorrect data"
+        - "ASN Signer info: Signature incorrect data"
+        - "ASN Signer info: Unsigned attributes incorrect data"
+        - "ICAO LDS object: Unsupported digest algorithm"
+        - "ICAO Signed data: Signer info empty"
+        - "ICAO Signer info: Unsupported digest algorithm"
+        - "ICAO Signer info: Unsupported signature algorithm"
+        - "ICAO Signer info: Message digest error"
+        - "ICAO Signer info: Signed attributes missed"
+        - "Auth: Signer info cannot find certificate"
+        - "Auth: Error"
+        - "Auth: Unsupported signature algorithm"
+        - "Auth: Unsupported public key algorithm"
+        - "Auth: Messed algorithms"
+        - "Auth: Public key data invalid"
+        - "Auth: Algorithm parameters data invalid"
+        - "Auth: Signature data invalid"
+        - "Auth: Unsupported digest algorithm"
+        - "Auth: Signature data incorrect"
+        - "Auth: Algorithm parameters not defined"
+        - "Auth: Signature check failed"
+        - "DG: Wrong Tag"
+        - "DG: Contents unexpected data"
+        - "BAP: Symmetric Cypher Cannot Initialize"
+        - "PACE: Info Not Available"
+        - "PACE: Symmetric Cypher Cannot Initialize"
+        - "PACE: Key Agreement Cannot Initialize"
+        - "PACE: Ephemeral Keys Cannot Create"
+        - "PACE: Mapping Cannot Decode Nonce"
+        - "PACE: Shared Secret Cannot Create"
+        - "PACE: Domain Params Unsupported Format"
+        - "PACE: Ephemeral Keys Incorrect"
+        - "PACE: Mapping Ephemeral Keys Incorrect"
+        - "PACE: Mapping Cannot Perform"
+        - "PACE: Non-Matching Auth Tokens"
+        - "PACE: CAM data incorrect"
+        - "PACE: CAM data cannot verify"
+        - "PACE: CAM data non-matching"
+        - "PACE: IM scheme incorrect"
+        - "PACE: Random mapping failed"
+        - "CA: Cannot Find Public Key"
+        - "CA: Cannot Find Info"
+        - "CA: Incorrect Version"
+        - "CA: Cannot Find Domain Parameters"
+        - "CA: Key Agreement Cannot Initialize"
+        - "CA: Public Key Unsupported Algorithm"
+        - "CA: Ephemeral Keys Cannot Create"
+        - "CA: Shared Secret Cannot Create"
+        - "CA: Non-Matching Auth Tokens"
+        - "TA: Incorrect Version"
+        - "TA: Cannot Build Certificate Chain"
+        - "TA: Cannot Find IS Private Key"
+        - "TA: Public Key Unsupported Algorithm"
+        - "TA: Signature Building Error"
+        - "TA: Invalid Key Algorithm Parameters"
+        - "AA: Public Key Unsupported Algorithm"
+        - "AA: Public Key Incorrect Data"
+        - "AA: Public Key Incorrect Parameters"
+        - "AA: Public Key Undefined Parameters"
+        - "AA: Signature Incorrect Data"
+        - "AA: Unsupported recovery scheme"
+        - "AA: Incorrect Trailer"
+        - "AA: Unsupported Digest Algorithm"
+        - "RI: Sector Key Cannot Find"
+        - "RI: Sector Key Incorrect Data"
+        - "RI: Sector Key Incomplete Data"
+        - "CV Certificate: Missing mandatory data PK"
+        - "CV Certificate: Public key unsupported"
+        - "CV Certificate: CHAT unsupported terminal type"
+        - "CV Certificate: Private key unsupported"
+        - "CV Certificate: Private key invalid params"
+        - "CV Certificate: Incorrect data"
+        - "CV Certificate: CPI incorrect data"
+        - "CV Certificate: CAR incorrect data"
+        - "CV Certificate: Public key incorrect data"
+        - "CV Certificate: CHR incorrect data"
+        - "CV Certificate: CHAT incorrect data"
+        - "CV Certificate: Valid from incorrect data"
+        - "CV Certificate: Valid to incorrect data"
+        - "CV Certificate: Extensions incorrect data"
+        - "CV Certificate: Private key incorrect data"
+        - "CV Certificate: Private key missing"
+        - "VDS: Unsupported version"
+        - "VDS: Issuing country size"
+        - "VDS: Issuing country incorrect data"
+        - "VDS: Signature certificate size"
+        - "VDS: Signature certificate data"
+        - "VDS: Signature incorrect data"
+        - "VDS: Incorrect data"
+        - "VDS: Missing or incorrect data"
+        - "VDS: Missing or incorrect header"
+        - "VDS: Missing or incorrect type"
+        - "VDS: Missing or incorrect version"
+        - "VDS: Missing or incorrect issuing country"
+        - "VDS: Missing or incorrect message"
+        - "VDS: Missing or incorrect signature"
+        - "VDS: Missing or incorrect signature algorithm"
+        - "VDS: Missing or incorrect certificate"
+        - "VDS: Missing or incorrect signature value"
+      x-enum-varnames:
+        - "errLDS_Ok"
+        - "errLDS_ASN_IncorrectData"
+        - "errLDS_ASN_NotEnoughData"
+        - "errLDS_ASN_Contents_UnexpectedData"
+        - "errLDS_ASN_SignedData_IncorrectData"
+        - "errLDS_ASN_SignedData_EncapContents_IncorrectData"
+        - "errLDS_ASN_SignedData_Version_IncorrectData"
+        - "errLDS_ASN_SignedData_DigestAlgorithms_IncorrectData"
+        - "errLDS_ASN_LDSObject_IncorrectData"
+        - "errLDS_ASN_LDSObject_Version_IncorrectData"
+        - "errLDS_ASN_LDSObject_DigestAlgorithm_IncorrectData"
+        - "errLDS_ASN_LDSObject_DGHashes_IncorrectData"
+        - "errLDS_ASN_LDSObject_VersionInfo_IncorrectData"
+        - "errLDS_ASN_Certificate_IncorrectData"
+        - "errLDS_ASN_Certificate_Version_IncorrectData"
+        - "errLDS_ASN_Certificate_SN_IncorrectData"
+        - "errLDS_ASN_Certificate_Signature_IncorrectData"
+        - "errLDS_ASN_Certificate_Issuer_IncorrectData"
+        - "errLDS_ASN_Certificate_Validity_IncorrectData"
+        - "errLDS_ASN_Certificate_Subject_IncorrectData"
+        - "errLDS_ASN_Certificate_SubjectPK_IncorrectData"
+        - "errLDS_ASN_Certificate_Extensions_IncorrectData"
+        - "errLDS_ASN_SignerInfo_IncorrectData"
+        - "errLDS_ASN_SignerInfo_Version_IncorrectData"
+        - "errLDS_ASN_SignerInfo_SID_IncorrectData"
+        - "errLDS_ASN_SignerInfo_DigestAlg_IncorrectData"
+        - "errLDS_ASN_SignerInfo_SignedAttrs_IncorrectData"
+        - "errLDS_ASN_SignerInfo_SignAlg_IncorrectData"
+        - "errLDS_ASN_SignerInfo_Signature_IncorrectData"
+        - "errLDS_ASN_SignerInfo_UnsignedAttrs_IncorrectData"
+        - "errLDS_ICAO_LDSObject_UnsupportedDigestAlgorithm"
+        - "errLDS_ICAO_SignedData_SignerInfos_Empty"
+        - "errLDS_ICAO_SignerInfo_UnsupportedDigestAlgorithm"
+        - "errLDS_ICAO_SignerInfo_UnsupportedSignatureAlgorithm"
+        - "errLDS_ICAO_SignerInfo_MessageDigestError"
+        - "errLDS_ICAO_SignerInfo_SignedAttrs_Missed"
+        - "errLDS_Auth_SignerInfo_CantFindCertificate"
+        - "errLDS_Auth_Error"
+        - "errLDS_Auth_UnsupportedSignatureAlgorithm"
+        - "errLDS_Auth_UnsupportedPublicKeyAlgorithm"
+        - "errLDS_Auth_MessedAlgorithms"
+        - "errLDS_Auth_PublicKeyDataInvalid"
+        - "errLDS_Auth_AlgorithmParametersDataInvalid"
+        - "errLDS_Auth_SignatureDataInvalid"
+        - "errLDS_Auth_UnsupportedDigestAlgorithm"
+        - "errLDS_Auth_SignatureDataIncorrect"
+        - "errLDS_Auth_AlgorithmParametersNotDefined"
+        - "errLDS_Auth_SignatureCheckFailed"
+        - "errLDS_DG_WrongTag"
+        - "errLDS_DG_Contents_UnexpectedData"
+        - "errLDS_BAP_SymmetricCypher_CantInitialize"
+        - "errLDS_PACE_Info_NotAvailable"
+        - "errLDS_PACE_SymmetricCypher_CantInitialize"
+        - "errLDS_PACE_KeyAgreement_CantInitialize"
+        - "errLDS_PACE_EphemeralKeys_CantCreate"
+        - "errLDS_PACE_Mapping_CantDecodeNonce"
+        - "errLDS_PACE_SharedSecret_CantCreate"
+        - "errLDS_PACE_DomainParams_UnsupportedFormat"
+        - "errLDS_PACE_EphemeralKeys_Incorrect"
+        - "errLDS_PACE_Mapping_EphemeralKeys_Incorrect"
+        - "errLDS_PACE_Mapping_CantPerform"
+        - "errLDS_PACE_NonMatchingAuthTokens"
+        - "errLDS_PACE_CAM_Data_Incorrect"
+        - "errLDS_PACE_CAM_Data_CantVerify"
+        - "errLDS_PACE_CAM_Data_NonMatching"
+        - "errLDS_PACE_IM_Scheme_Incorrect"
+        - "errLDS_PACE_IM_RandomMapping_Failed"
+        - "errLDS_CA_CantFindPublicKey"
+        - "errLDS_CA_CantFindInfo"
+        - "errLDS_CA_IncorrectVersion"
+        - "errLDS_CA_CantFindDomainParameters"
+        - "errLDS_CA_KeyAgreement_CantInitialize"
+        - "errLDS_CA_PublicKey_UnsupportedAlgorithm"
+        - "errLDS_CA_EphemeralKeys_CantCreate"
+        - "errLDS_CA_SharedSecret_CantCreate"
+        - "errLDS_CA_NonMatchingAuthTokens"
+        - "errLDS_TA_IncorrectVersion"
+        - "errLDS_TA_CantBuildCertificateChain"
+        - "errLDS_TA_CantFindISPrivateKey"
+        - "errLDS_TA_PublicKey_UnsupportedAlgorithm"
+        - "errLDS_TA_SignatureBuildingError"
+        - "errLDS_TA_InvalidKeyAlgorithmParameters"
+        - "errLDS_AA_PublicKey_UnsupportedAlgorithm"
+        - "errLDS_AA_PublicKey_IncorrectData"
+        - "errLDS_AA_PublicKey_IncorrectParameters"
+        - "errLDS_AA_PublicKey_UndefinedParameters"
+        - "errLDS_AA_Signature_IncorrectData"
+        - "errLDS_AA_UnsupportedRecoveryScheme"
+        - "errLDS_AA_IncorrectTrailer"
+        - "errLDS_AA_UnsupportedDigestAlgorithm"
+        - "errLDS_RI_SectorKey_CantFind"
+        - "errLDS_RI_SectorKey_IncorrectData"
+        - "errLDS_RI_SectorKey_IncompleteData"
+        - "errLDS_CV_Certificate_MissingMandatoryData_PK"
+        - "errLDS_CV_Certificate_PublicKey_Unsupported"
+        - "errLDS_CV_Certificate_CHAT_UnsupportedTerminalType"
+        - "errLDS_CV_Certificate_PrivateKey_Unsupported"
+        - "errLDS_CV_Certificate_PrivateKey_InvalidParams"
+        - "errLDS_CV_Certificate_IncorrectData"
+        - "errLDS_CV_Certificate_CPI_IncorrectData"
+        - "errLDS_CV_Certificate_CAR_IncorrectData"
+        - "errLDS_CV_Certificate_PublicKey_IncorrectData"
+        - "errLDS_CV_Certificate_CHR_IncorrectData"
+        - "errLDS_CV_Certificate_CHAT_IncorrectData"
+        - "errLDS_CV_Certificate_ValidFrom_IncorrectData"
+        - "errLDS_CV_Certificate_ValidTo_IncorrectData"
+        - "errLDS_CV_Certificate_Extensions_IncorrectData"
+        - "errLDS_CV_Certificate_PrivateKey_IncorrectData"
+        - "errLDS_CV_Certificate_PrivateKey_Missing"
+        - "errLDS_VDS_UnsupportedVersion"
+        - "errLDS_VDS_Issuing_Country_Size"
+        - "errLDS_VDS_Issuing_Country_IncorrectData"
+        - "errLDS_VDS_Signer_Certificate_Size"
+        - "errLDS_VDS_Signer_Certificate_Data"
+        - "errLDS_VDS_Signature_IncorrectData"
+        - "errLDS_VDS_NC_IncorrectData"
+        - "errLDS_VDS_NC_MissingOrIncorrect_Data"
+        - "errLDS_VDS_NC_MissingOrIncorrect_Header"
+        - "errLDS_VDS_NC_MissingOrIncorrect_Type"
+        - "errLDS_VDS_NC_MissingOrIncorrect_Version"
+        - "errLDS_VDS_NC_MissingOrIncorrect_IssuingCountry"
+        - "errLDS_VDS_NC_MissingOrIncorrect_Message"
+        - "errLDS_VDS_NC_MissingOrIncorrect_Signature"
+        - "errLDS_VDS_NC_MissingOrIncorrect_SigAlgorithm"
+        - "errLDS_VDS_NC_MissingOrIncorrect_Certificate"
+        - "errLDS_VDS_NC_MissingOrIncorrect_SigValue"

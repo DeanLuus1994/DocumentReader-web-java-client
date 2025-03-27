@@ -1,0 +1,111 @@
+openapi: 3.0.3
+info:
+  version: 7.2.0
+  title: Regula Document Reader Web API
+  x-logo:
+    url: "https://static-content.regulaforensics.com/Icons/Logos/Regula-logo.svg"
+    href: "https://regulaforensics.com"
+  description: |
+    Documents recognition as easy as reading two bytes.
+
+    # Clients:
+    * [JavaScript](https://github.com/regulaforensics/DocumentReader-web-js-client) client for the browser and node.js based on axios
+    * [Java](https://github.com/regulaforensics/DocumentReader-web-java-client) client compatible with jvm and android
+    * [Python](https://github.com/regulaforensics/DocumentReader-web-python-client) 3.5+ client
+    * [C#](https://github.com/regulaforensics/DocumentReader-web-csharp-client) client for .NET & .NET Core
+
+servers:
+  - url: https://api.regulaforensics.com/
+    description: Latest stable Regula Document Reader demo endpoint
+  - url: https://nightly-api.regulaforensics.com/
+    description: Nightly Regula document reader demo endpoint
+  - url: http://localhost:8080/
+    description: Local on-premise installation
+
+paths:
+  /api/process:
+    $ref: "./p-process.yml#/paths/~1process"
+  /api/v2/transaction/{transactionId}/process:
+    $ref: "./p-transaction.yml#/paths/~1transaction~1{transactionId}~1process"
+  /api/v2/transaction/{transactionId}:
+    $ref: "./p-transaction.yml#/paths/~1transaction~1{transactionId}"
+  /api/v2/transaction/{transactionId}/results:
+    $ref: "./p-transaction.yml#/paths/~1transaction~1{transactionId}~1results"
+  /api/v2/transaction/{transactionId}/file:
+    $ref: "./p-transaction.yml#/paths/~1transaction~1{transactionId}~1file"
+  /api/v2/tag/{tagId}:
+    $ref: "./p-transaction.yml#/paths/~1tag~1{tagId}"
+  /api/v2/tag/{tagId}/transactions:
+    $ref: "./p-transaction.yml#/paths/~1tag~1{tagId}~1transactions"
+  /api/ping:
+    $ref: "./p-ping.yml#/paths/~1ping"
+  /api/healthz:
+    $ref: "./p-healthcheck.yml#/paths/~1healthz"
+  /api/readyz:
+    $ref: "./p-healthcheck.yml#/paths/~1readyz"
+
+tags:
+  - name: process
+    description: Everything about perfoming request and parsing response
+  - name: status_model
+    x-displayName: Status Model
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Status" />
+  - name: text_model
+    x-displayName: Text Model
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Text" />
+  - name: images_model
+    x-displayName: Images Model
+    description: |
+      **Images model:**
+      <SchemaDefinition schemaRef="#/components/schemas/Images" />
+      **Document image model:**
+      <SchemaDefinition schemaRef="#/components/schemas/DocumentImage" />
+  - name: document_model
+    x-displayName: Document Model
+    description: |
+      **Choosen Document model:**
+      <SchemaDefinition schemaRef="#/components/schemas/ChosenDocumentType" />
+      **Candidates model:**
+      <SchemaDefinition schemaRef="#/components/schemas/DocumentTypesCandidates" />
+  - name: authenticity_model
+    x-displayName: Authenticity Model
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/AuthenticityCheckResult" />
+
+
+x-tagGroups:
+  - name: Requests
+    tags:
+      - process
+      - transaction
+      - healthcheck
+  - name: Models
+    tags:
+      - status_model
+      - text_model
+      - images_model
+      - document_model
+      - authenticity_model
+
+components:
+  schemas:
+    Status:
+      $ref: "./rt-status.yml#/components/schemas/Status"
+    Text:
+      $ref: "./rt-text.yml#/components/schemas/Text"
+    Images:
+      $ref: "./rt-images.yml#/components/schemas/Images"
+    DocumentImage:
+      $ref: "./common.yml#/components/schemas/ImageData"
+    TransactionImage:
+      $ref: "./common.yml#/components/schemas/ImageTransactionData"
+    DocumentTypesCandidates:
+      $ref: "./rt-doc-type-old.yml#/components/schemas/DocumentTypesCandidatesList"
+    ChosenDocumentType:
+      $ref: "./rt-doc-type-old.yml#/components/schemas/OneCandidate"
+    AuthenticityCheckResult:
+      $ref: "./rt-authenticity.yml#/components/schemas/AuthenticityCheckResult"
+    AuthenticityResultType:
+      $ref: "./authenticity/e-result-type.yml#/components/schemas/AuthenticityResultType"
