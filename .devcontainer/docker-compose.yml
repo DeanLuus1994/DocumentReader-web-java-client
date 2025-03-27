@@ -1,21 +1,16 @@
-version: '3.8'
 services:
   dev:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-      args:
-        BUILDKIT_INLINE_CACHE: 1
     volumes:
       - ..:/workspaces/DocumentReader-web-java-client
       - vscode-gradle-volume:/home/vscode/.gradle
       - vscode-m2-volume:/home/vscode/.m2
       - /var/run/docker.sock:/var/run/docker.sock
-    privileged: true
-    command: sleep infinity
     environment:
       - GRADLE_USER_HOME=/home/vscode/.gradle
-      - JAVA_HOME=/usr/local/sdkman/candidates/java/current
+    privileged: true
 
 volumes:
   vscode-gradle-volume:

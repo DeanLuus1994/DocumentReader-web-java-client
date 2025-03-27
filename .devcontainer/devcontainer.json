@@ -12,40 +12,19 @@
                 "vscjava.vscode-java-debug",
                 "vscjava.vscode-java-test",
                 "ms-azuretools.vscode-docker",
-                "redhat.vscode-yaml",
-                "esbenp.prettier-vscode",
-                "visualstudioexptteam.vscodeintellicode"
+                "redhat.vscode-yaml"
             ],
             "settings": {
-                "java.jdt.ls.java.home": "/usr/local/sdkman/candidates/java/current",
                 "java.configuration.updateBuildConfiguration": "automatic",
                 "java.import.gradle.enabled": true,
                 "java.import.gradle.wrapper.enabled": true,
                 "editor.formatOnSave": true,
-                "java.server.launchMode": "Standard",
-                "terminal.integrated.defaultProfile.linux": "bash",
-                "terminal.integrated.profiles.linux": {
-                    "bash": {
-                        "path": "bash",
-                        "icon": "terminal-bash"
-                    }
-                }
+                "terminal.integrated.defaultProfile.linux": "bash"
             }
         }
     },
     "remoteUser": "vscode",
-    // Wait for container to fully initialize
     "waitFor": "postCreateCommand",
-    // Optionally run a command after container is created
-    "postCreateCommand": "echo '🎉 DevContainer is ready to use! The OpenAPI repository has been cloned, models have been generated, and the project has been built.'",
-    // Update content in container
+    "postCreateCommand": "echo '🎉 DevContainer is ready to use!'",
     "postStartCommand": "if [ -f '/tmp/needs_setup' ]; then echo 'Initial setup in progress...'; else echo 'Container ready!'; fi"
-    // Uncomment to use GitHub Codespaces features
-    // "features": {
-    //     "ghcr.io/devcontainers/features/java:1": {
-    //         "version": "17",
-    //         "installGradle": "true"
-    //     },
-    //     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-    // }
 }
