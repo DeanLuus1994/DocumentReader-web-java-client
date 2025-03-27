@@ -22,6 +22,17 @@ services:
     environment:
       - GRADLE_USER_HOME=/home/vscode/.gradle
     privileged: true
+    # Add healthcheck to ensure container stays running and can recover
+    healthcheck:
+      test: [ "CMD", "ps", "aux", "||", "exit", "1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    # Container will keep running even if the entrypoint script exits
+    init: true
+    # Explicitly set container-exit-behavior to avoid stopping container
+    restart: unless-stopped
 
 volumes:
   vscode-gradle-volume:
