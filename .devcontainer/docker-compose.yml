@@ -9,53 +9,82 @@
 # Last updated: 2025/03/27
 #===============================================================================
 
-# Version directive removed as it's obsolete in newer Docker Compose versions
-
 services:
   dev:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       args:
-        - JAVA_VERSION=${JAVA_VERSION}
-        - USER_NAME=${USER_NAME}
-        - USER_ID=${USER_ID}
-        - GROUP_ID=${GROUP_ID}
+        - USER_NAME=${USER_NAME:-vscode}
+        - USER_ID=${USER_ID:-1000}
+        - GROUP_ID=${GROUP_ID:-1000}
+        - GRADLE_VERSION=${GRADLE_VERSION:-7.6.1}
+        - MAVEN_VERSION=${MAVEN_VERSION:-3.9.2}
+      # Ensure build doesn't use cache to prevent outdated dependencies
+      no_cache: ${NO_CACHE:-false}
     volumes:
-      - ..:/workspaces/DocumentReader-web-java-client
-      - vscode-gradle-volume:${GRADLE_USER_HOME}
-      - vscode-m2-volume:${M2_HOME}
-      - ${DOCKER_SOCKET}:${DOCKER_SOCKET}
+      - ..:/workspaces/DocumentReader-web-java-client:cached
+      - vscode-gradle-volume:${GRADLE_USER_HOME:-/home/vscode/.gradle}
+      - vscode-m2-volume:${M2_HOME:-/home/vscode/.m2}
+      - ${DOCKER_SOCKET:-/var/run/docker.sock}:${DOCKER_SOCKET:-/var/run/docker.sock}
+      # Mount custom log directory for persistence
+      - devcontainer-logs:/tmp/devcontainer-logs
     environment:
-      - GRADLE_USER_HOME=${GRADLE_USER_HOME}
-      - M2_HOME=${M2_HOME}
-      - JAVA_HOME=${JAVA_HOME}
-      - OPENAPI_GENERATOR_VERSION=${OPENAPI_GENERATOR_VERSION}
-      - PROJECT_DIR=${PROJECT_DIR}
-      - OPENAPI_DIR=${OPENAPI_DIR}
-      - RESOURCES_DIR=${RESOURCES_DIR}
-      - DOCKER_SOCKET=${DOCKER_SOCKET}
-    # Use host network to ensure Docker communication works
+      - GRADLE_USER_HOME=${GRADLE_USER_HOME:-/home/vscode/.gradle}
+      - M2_HOME=${M2_HOME:-/home/vscode/.m2}
+      - JAVA_HOME=${JAVA_HOME:-/opt/java/openjdk}
+      - OPENAPI_GENERATOR_VERSION=${OPENAPI_GENERATOR_VERSION:-v5.0.0-beta2}
+      - PROJECT_DIR=${PROJECT_DIR:-/workspaces/DocumentReader-web-java-client}
+      - OPENAPI_DIR=${OPENAPI_DIR:-/workspaces/DocumentReader-web-java-client/openapi}
+      - RESOURCES_DIR=${RESOURCES_DIR:-/workspaces/DocumentReader-web-java-client/example/src/main/resources}
+      - DOCKER_SOCKET=${DOCKER_SOCKET:-/var/run/docker.sock}
+      - DEBUG=${DEBUG:-true}
+      - ENUM_MAPPINGS=${ENUM_MAPPINGS}
+      - TZ=${TZ:-UTC}
+      - LANG=${LANG:-en_US.UTF-8}
+      - EDITOR=${EDITOR:-vi}
+    # Use host network for maximum compatibility
     network_mode: "host"
+    # Privileged mode for Docker-in-Docker capabilities
     privileged: true
-    # Add healthcheck to ensure container stays running and can recover
+    # Comprehensive health check
     healthcheck:
-      test: [ "CMD", "ps", "aux" ]
-      interval: ${HEALTHCHECK_INTERVAL}
-      timeout: ${HEALTHCHECK_TIMEOUT}
-      retries: ${HEALTHCHECK_RETRIES}
-      start_period: ${HEALTHCHECK_START_PERIOD}
-    # Container will keep running even if the entrypoint script exits
+      test: ["CMD", "bash", "-c", "ps aux && java -version && docker ps && grep -q 'Container is healthy' /tmp/container-health || exit 1"]
+      interval: ${HEALTHCHECK_INTERVAL:-30s}
+      timeout: ${HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${HEALTHCHECK_RETRIES:-3}
+      start_period: ${HEALTHCHECK_START_PERIOD:-30s}
+    # Use init process to prevent zombie processes
     init: true
-    # Explicitly set container-exit-behavior to avoid stopping container
+    # Auto-restart policy for resilience
     restart: unless-stopped
+    # Additional capabilities for debugging
     cap_add:
       - SYS_PTRACE
+      - NET_ADMIN
     security_opt:
       - seccomp:unconfined
+    # Load environment variables from file
     env_file:
       - .env
+    # Resource limits to prevent container from consuming excessive resources
+    deploy:
+      resources:
+        limits:
+          memory: ${CONTAINER_MEMORY_LIMIT:-4g}
+        reservations:
+          memory: ${CONTAINER_MEMORY_RESERVATION:-2g}
+    # Custom container name for easy identification
+    container_name: ${CONTAINER_NAME:-documentreader-web-java-client}
+    # Working directory inside container
+    working_dir: ${PROJECT_DIR:-/workspaces/DocumentReader-web-java-client}
+    # Default command if not specified
+    command: ["sleep", "infinity"]
 
 volumes:
   vscode-gradle-volume:
+    name: ${GRADLE_VOLUME_NAME:-documentreader-gradle-cache}
   vscode-m2-volume:
+    name: ${M2_VOLUME_NAME:-documentreader-m2-cache}
+  devcontainer-logs:
+    name: ${LOGS_VOLUME_NAME:-documentreader-logs}
