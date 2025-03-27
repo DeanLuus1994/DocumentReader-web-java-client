@@ -1,3 +1,13 @@
+//===============================================================================
+// DocumentReader Web Java Client - VS Code Dev Container Configuration
+//===============================================================================
+// Original Author: Regula Forensics Inc. (base repository)
+// Dev Container Implementation: Dean Luus
+// Email: dean.luus@jdconsulting.com
+// GitHub: https://github.com/DeanLuus
+// Date: 2025/03/27
+// Last updated: 2025/03/27
+//===============================================================================
 {
     "name": "Java - DocumentReader Web Client",
     "dockerComposeFile": "docker-compose.yml",

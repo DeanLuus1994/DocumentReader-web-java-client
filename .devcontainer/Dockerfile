@@ -1,3 +1,14 @@
+#===============================================================================
+# DocumentReader Web Java Client - Development Container Definition
+#===============================================================================
+# Original Author: Regula Forensics Inc. (base repository)
+# Dev Container Implementation: Dean Luus
+# Email: dean.luus@jdconsulting.com
+# GitHub: https://github.com/DeanLuus
+# Date: 2025/03/27
+# Last updated: 2025/03/27
+#===============================================================================
+
 FROM eclipse-temurin:17-jre-alpine
 
 # Install dependencies and setup user in one layer

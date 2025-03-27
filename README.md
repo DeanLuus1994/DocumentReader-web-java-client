@@ -1,4 +1,14 @@
 # Regula Document Reader Java Client
+#===============================================================================
+# DocumentReader Web Java Client
+#===============================================================================
+# Original Author: Regula Forensics Inc.
+# Dev Container Implementation: Dean Luus
+# Email: dean.luus@jdconsulting.com
+# GitHub: https://github.com/DeanLuus
+# Date: 2025/03/27
+# Last updated: 2025/03/27
+#===============================================================================
 
 [![maven](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.regulaforensics.com%2FRegulaDocumentReaderWebClient%2Fcom%2Fregula%2Fdocumentreader%2Fwebclient%2Fmaven-metadata.xml&style=flat-square)](https://support.regulaforensics.com/hc/en-us/articles/115000916306-Documentation)
 [![OpenAPI](https://img.shields.io/badge/OpenAPI-defs-8c0a56?style=flat-square)](https://github.com/regulaforensics/DocumentReader-web-openapi)

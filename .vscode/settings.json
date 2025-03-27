@@ -1,3 +1,13 @@
+//===============================================================================
+// DocumentReader Web Java Client - VS Code Settings
+//===============================================================================
+// Original Author: Regula Forensics Inc. (base repository)
+// Dev Container Implementation: Dean Luus
+// Email: dean.luus@jdconsulting.com
+// GitHub: https://github.com/DeanLuus
+// Date: 2025/03/27
+// Last updated: 2025/03/27
+//===============================================================================
 {
     // Java configuration
     "java.compile.nullAnalysis.mode": "automatic",
@@ -23,12 +33,5 @@
     },
     "github.copilot.experimental": {
         "advanced": true
-    },
-    "github.copilot.suggestionDelay": 0,
-    "github.copilot.enableSemantic": true,
-    "github.copilot.chat.generateTests.codeLens": true,
-    "github.copilot.chat.edits.temporalContext.enabled": true,
-    "github.copilot.chat.editor.temporalContext.enabled": true,
-    "github.copilot.chat.edits.codesearch.enabled": true,
-    "github.copilot.nextEditSuggestions.enabled": true
+    }
 }
