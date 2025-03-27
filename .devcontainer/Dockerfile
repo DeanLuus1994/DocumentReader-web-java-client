@@ -11,7 +11,7 @@
 
 ARG JAVA_VERSION=17
 
-FROM eclipse-temurin:${JAVA_VERSION}-jre-alpine
+FROM eclipse-temurin:${JAVA_VERSION}-jdk-alpine
 
 # Accept build arguments
 ARG USER_NAME=vscode
@@ -19,7 +19,7 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 
 # Install dependencies and setup user in one layer
-RUN apk add --no-cache git docker-cli curl bash procps coreutils shadow sudo && \
+RUN apk add --no-cache git docker-cli curl bash procps coreutils shadow sudo gradle && \
     addgroup -g ${GROUP_ID} ${USER_NAME} && \
     adduser -u ${USER_ID} -G ${USER_NAME} -s /bin/bash -D ${USER_NAME} && \
     echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
