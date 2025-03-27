@@ -12,7 +12,9 @@
                 "vscjava.vscode-java-debug",
                 "vscjava.vscode-java-test",
                 "ms-azuretools.vscode-docker",
-                "redhat.vscode-yaml"
+                "redhat.vscode-yaml",
+                "github.copilot",
+                "github.copilot-chat"
             ],
             "settings": {
                 "java.configuration.updateBuildConfiguration": "automatic",
@@ -24,7 +26,5 @@
         }
     },
     "remoteUser": "vscode",
-    "waitFor": "postCreateCommand",
-    "postCreateCommand": "echo '🎉 DevContainer is ready to use!'",
     "postStartCommand": "if [ -f '/tmp/needs_setup' ]; then echo 'Initial setup in progress...'; else echo 'Container ready!'; fi"
 }

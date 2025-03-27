@@ -1,8 +1,31 @@
+# Build outputs
 .gradle
-.idea
-build
+build/
+out/
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Temporary files
+*.log
+.DS_Store
+*.tmp
+hs_err_pid*
+
+# Project specific files
 gradle.properties
 document-image.jpg
 portrait.jpg
 /example/src/main/resources/regula.license
 /Dockerfile
+
+# Generated code
+client/src/main/generated/

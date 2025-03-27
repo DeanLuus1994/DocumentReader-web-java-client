@@ -135,11 +135,7 @@ Models generation is based on [OpenAPI specifications](https://github.com/regula
 ### Building from Source
 
 1. Clone this repository
-2. Generate models from OpenAPI definitions:
-   ```bash
-   ./update-models.sh
-   ```
-3. Build the project:
+2. Build the project:
    ```bash
    ./gradlew build
    ```
@@ -152,6 +148,15 @@ This project includes a dev container configuration for easy development environ
 2. VS Code will automatically build and start the container
 3. Models will be generated and the project will be built automatically
 
+### Model Generation
+
+The OpenAPI models are automatically generated using the OpenAPI generator. The process:
+
+1. Uses the OpenAPI definitions from the openapi directory
+2. Generates Java models and API clients
+3. Applies enum mappings for proper type handling
+4. Formats the generated code
+
 ### Contributing
 
 If you have any problems with or questions about this client, please contact us
@@ -159,6 +164,3 @@ through a [GitHub issue](https://github.com/regulaforensics/DocumentReader-api-j
 
 You are invited to contribute [new features, fixes, or updates](https://github.com/regulaforensics/DocumentReader-api-java-clien/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22), large or small.
 We are always thrilled to receive pull requests, and do our best to process them as fast as we can.
-```
-
-

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Check if we need to run the setup
+# Check if setup is needed
 if [ -f "/tmp/needs_setup" ]; then
     echo "🚀 Initial container setup in progress..."
     
