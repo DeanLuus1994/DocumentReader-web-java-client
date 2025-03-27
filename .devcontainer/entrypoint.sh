@@ -16,11 +16,23 @@ if [ -f "/tmp/needs_setup" ]; then
             chmod +x setup-and-test-regula.sh
         fi
         
+        # Clone the OpenAPI definitions repository if not present
+        if [ ! -d "../DocumentReader-web-openapi" ]; then
+            echo "📋 Cloning OpenAPI definitions repository..."
+            cd ..
+            git clone https://github.com/regulaforensics/DocumentReader-web-openapi.git
+            cd /workspaces/DocumentReader-web-java-client
+        fi
+        
         echo "📦 Generating models from OpenAPI definitions..."
         ./update-models.sh || echo "⚠️ Model generation failed but continuing"
         
         echo "🔨 Building project with Gradle..."
         ./gradlew --no-daemon build -x test || echo "⚠️ Build failed but continuing"
+        
+        # Create example test resources directory
+        mkdir -p /workspaces/DocumentReader-web-java-client/example/src/main/resources
+        echo "⚠️ Note: For full API testing, add your regula.license file to example/src/main/resources/"
         
         echo "✅ Initial setup complete!"
         rm /tmp/needs_setup
