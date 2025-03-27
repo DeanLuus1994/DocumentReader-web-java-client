@@ -1,14 +1,30 @@
 {
-    "name": "Java - Optimized",
+    "name": "Java - DocumentReader Web Client",
     "dockerComposeFile": "docker-compose.yml",
     "service": "dev",
     "workspaceFolder": "/workspaces/DocumentReader-web-java-client",
     "customizations": {
         "vscode": {
             "extensions": [
-                "vscjava.vscode-java-pack"
-            ]
+                "vscjava.vscode-java-pack",
+                "redhat.java",
+                "vscjava.vscode-gradle",
+                "vscjava.vscode-java-debug",
+                "vscjava.vscode-java-test",
+                "ms-azuretools.vscode-docker"
+            ],
+            "settings": {
+                "java.jdt.ls.java.home": "/usr/local/sdkman/candidates/java/current",
+                "java.configuration.updateBuildConfiguration": "automatic",
+                "java.import.gradle.enabled": true,
+                "java.import.gradle.wrapper.enabled": true,
+                "editor.formatOnSave": true
+            }
         }
     },
-    "remoteUser": "vscode"
+    "remoteUser": "vscode",
+    // Wait for container to fully initialize
+    "waitFor": "postCreateCommand",
+    // Optionally run a command after container is created
+    "postCreateCommand": "echo 'DevContainer is ready to use!'"
 }

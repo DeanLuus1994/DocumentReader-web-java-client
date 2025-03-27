@@ -1,11 +1,12 @@
 services:
   dev:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
       args:
         BUILDKIT_INLINE_CACHE: 1
     volumes:
+      - ..:/workspaces/DocumentReader-web-java-client
       - vscode-gradle-volume:/home/vscode/.gradle
       - vscode-m2-volume:/home/vscode/.m2
     privileged: true
