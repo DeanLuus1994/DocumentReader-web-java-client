@@ -16,22 +16,22 @@ RUN apt-get update && apt-get install -y \
     curl \
     gnupg-agent \
     software-properties-common \
-    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - \
-    && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+    git \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+    && chmod a+r /etc/apt/keyrings/docker.gpg \
+    && echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null \
     && apt-get update \
-    && apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin \
+    && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Add vscode user to docker group
 RUN usermod -aG docker vscode
 
-# Ensure all scripts are executable
-RUN chmod +x gradlew update-models.sh
-
-# Set up the project
-# We'll use a conditional approach to handle both initial build and subsequent runs
-# This avoids rebuilding when container is restarted
+# Create necessary directories
+RUN mkdir -p /workspaces && \
+    mkdir -p /workspaces/DocumentReader-web-java-client/example/src/main/resources
 
 # Create a marker file to track if initialization is needed
 RUN echo "Initial setup required" > /tmp/needs_setup
