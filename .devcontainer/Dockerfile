@@ -9,23 +9,34 @@
 # Last updated: 2025/03/27
 #===============================================================================
 
-FROM eclipse-temurin:17-jre-alpine
+ARG JAVA_VERSION=17
+
+FROM eclipse-temurin:${JAVA_VERSION}-jre-alpine
+
+# Accept build arguments
+ARG USER_NAME=vscode
+ARG USER_ID=1000
+ARG GROUP_ID=1000
 
 # Install dependencies and setup user in one layer
-RUN apk add --no-cache git docker-cli curl bash && \
-    addgroup -g 1000 vscode && \
-    adduser -u 1000 -G vscode -s /bin/bash -D vscode && \
+RUN apk add --no-cache git docker-cli curl bash procps coreutils shadow sudo && \
+    addgroup -g ${GROUP_ID} ${USER_NAME} && \
+    adduser -u ${USER_ID} -G ${USER_NAME} -s /bin/bash -D ${USER_NAME} && \
+    echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER_NAME} && \
+    chmod 0440 /etc/sudoers.d/${USER_NAME} && \
     addgroup docker && \
-    addgroup vscode docker
+    addgroup ${USER_NAME} docker
 
 WORKDIR /workspaces/DocumentReader-web-java-client
 
-# Setup entrypoint
+# Setup entrypoint with proper permissions
 COPY .devcontainer/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh && \
-    echo "Initial setup required" > /tmp/needs_setup
+    chown ${USER_NAME}:${USER_NAME} /usr/local/bin/entrypoint.sh && \
+    echo "Initial setup required" > /tmp/needs_setup && \
+    chown ${USER_NAME}:${USER_NAME} /tmp/needs_setup
 
-USER vscode
+USER ${USER_NAME}
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["sleep", "infinity"]

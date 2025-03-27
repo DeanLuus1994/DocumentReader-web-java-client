@@ -9,30 +9,52 @@
 # Last updated: 2025/03/27
 #===============================================================================
 
+version: '3.8'
+
 services:
   dev:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
+      args:
+        - JAVA_VERSION=${JAVA_VERSION}
+        - USER_NAME=${USER_NAME}
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
     volumes:
       - ..:/workspaces/DocumentReader-web-java-client
-      - vscode-gradle-volume:/home/vscode/.gradle
-      - vscode-m2-volume:/home/vscode/.m2
-      - /var/run/docker.sock:/var/run/docker.sock
+      - vscode-gradle-volume:${GRADLE_USER_HOME}
+      - vscode-m2-volume:${M2_HOME}
+      - ${DOCKER_SOCKET}:${DOCKER_SOCKET}
     environment:
-      - GRADLE_USER_HOME=/home/vscode/.gradle
+      - GRADLE_USER_HOME=${GRADLE_USER_HOME}
+      - M2_HOME=${M2_HOME}
+      - JAVA_HOME=${JAVA_HOME}
+      - OPENAPI_GENERATOR_VERSION=${OPENAPI_GENERATOR_VERSION}
+      - PROJECT_DIR=${PROJECT_DIR}
+      - OPENAPI_DIR=${OPENAPI_DIR}
+      - RESOURCES_DIR=${RESOURCES_DIR}
+      - DOCKER_SOCKET=${DOCKER_SOCKET}
+    # Use host network to ensure Docker communication works
+    network_mode: "host"
     privileged: true
     # Add healthcheck to ensure container stays running and can recover
     healthcheck:
-      test: [ "CMD", "ps", "aux", "||", "exit", "1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
+      test: [ "CMD", "ps", "aux" ]
+      interval: ${HEALTHCHECK_INTERVAL}
+      timeout: ${HEALTHCHECK_TIMEOUT}
+      retries: ${HEALTHCHECK_RETRIES}
+      start_period: ${HEALTHCHECK_START_PERIOD}
     # Container will keep running even if the entrypoint script exits
     init: true
     # Explicitly set container-exit-behavior to avoid stopping container
     restart: unless-stopped
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    env_file:
+      - .env
 
 volumes:
   vscode-gradle-volume:

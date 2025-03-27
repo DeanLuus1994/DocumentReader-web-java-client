@@ -1,4 +1,5 @@
 #!/bin/bash
+# filepath: /workspaces/DocumentReader-web-java-client/.devcontainer/entrypoint.sh
 #===============================================================================
 # DocumentReader Web Java Client - Development Container Entrypoint
 #===============================================================================
@@ -10,22 +11,28 @@
 # Last updated: 2025/03/27
 #===============================================================================
 
-set -eo pipefail
+# Important: Remove the strict error handling to prevent container from crashing
+# set -eo pipefail
 
 #===============================================================================
 # CONSTANTS AND TYPE DECLARATIONS
 #===============================================================================
-readonly WORKSPACE_DIR="/workspaces/DocumentReader-web-java-client"
-readonly SETUP_FLAG_FILE="/tmp/needs_setup"
-readonly DOCKER_SOCKET="/var/run/docker.sock"
-readonly OPENAPI_GENERATOR_VERSION="v5.0.0-beta2"
 
-# Resource paths
-readonly RESOURCES_DIR="${WORKSPACE_DIR}/example/src/main/resources"
-readonly OPENAPI_DIR="${WORKSPACE_DIR}/openapi"
-readonly CONFIG_FILE="${WORKSPACE_DIR}/client/java-generator-config.json"
-readonly TEMPLATES_DIR="${WORKSPACE_DIR}/client/generator-templates"
-readonly CLIENT_OUTPUT_DIR="${WORKSPACE_DIR}/client"
+# Source environment variables if not already set
+if [ -f "/workspaces/DocumentReader-web-java-client/.devcontainer/.env" ]; then
+    source "/workspaces/DocumentReader-web-java-client/.devcontainer/.env"
+fi
+
+# Set defaults for critical environment variables if not provided
+: "${PROJECT_DIR:=/workspaces/DocumentReader-web-java-client}"
+: "${SETUP_FLAG_FILE:=/tmp/needs_setup}"
+: "${DOCKER_SOCKET:=/var/run/docker.sock}"
+: "${OPENAPI_GENERATOR_VERSION:=v5.0.0-beta2}"
+: "${RESOURCES_DIR:=${PROJECT_DIR}/example/src/main/resources}"
+: "${OPENAPI_DIR:=${PROJECT_DIR}/openapi}"
+: "${CONFIG_FILE:=${PROJECT_DIR}/client/java-generator-config.json}"
+: "${TEMPLATES_DIR:=${PROJECT_DIR}/client/generator-templates}"
+: "${CLIENT_OUTPUT_DIR:=${PROJECT_DIR}/client}"
 
 # Log levels
 readonly LOG_INFO="INFO"
@@ -45,14 +52,8 @@ readonly OP_SETUP_COMPLETE="SETUP_COMPLETE"
 readonly OP_CONTAINER_READY="CONTAINER_READY"
 readonly OP_EXEC="EXEC"
 
-# Type mappings for OpenAPI generation
-readonly ENUM_MAPPINGS="MeasureSystem=Integer,TextFieldType=Integer,GraphicFieldType=Integer,\
-Scenario=String,DocumentFormat=Integer,Light=Integer,Result=Integer,\
-VerificationResult=Integer,RfidLocation=Integer,DocumentTypeRecognitionResult=Integer,\
-ProcessingStatus=Integer,Source=String,CheckResult=Integer,LCID=Integer,\
-DocumentType=Integer,CheckDiagnose=Integer,Critical=Integer,AuthenticityResultType=Integer,\
-SecurityFeatureType=Integer,Visibility=Integer,ImageQualityCheckType=Integer,\
-LogLevel=String,MRZFormat=String,TextPostProcessing=Integer"
+# Use environment variable or default value for enum mappings
+: "${ENUM_MAPPINGS:=MeasureSystem=Integer,TextFieldType=Integer,GraphicFieldType=Integer,Scenario=String,DocumentFormat=Integer,Light=Integer,Result=Integer,VerificationResult=Integer,RfidLocation=Integer,DocumentTypeRecognitionResult=Integer,ProcessingStatus=Integer,Source=String,CheckResult=Integer,LCID=Integer,DocumentType=Integer,CheckDiagnose=Integer,Critical=Integer,AuthenticityResultType=Integer,SecurityFeatureType=Integer,Visibility=Integer,ImageQualityCheckType=Integer,LogLevel=String,MRZFormat=String,TextPostProcessing=Integer}"
 
 #===============================================================================
 # FUNCTION DECLARATIONS
@@ -87,12 +88,41 @@ function execute() {
         # Catch block
         local exit_code=$?
         log "${LOG_WARN}" "${operation}: Operation failed with code ${exit_code}, continuing"
-        return 1
+        # Return success anyway to prevent container restart
+        return 0
     }
     
     # Success block
     log "${LOG_INFO}" "${operation}: Operation completed successfully"
     return 0
+}
+
+# Function: check_directory_exists
+# Purpose: Check if a directory exists
+# Parameters:
+#   $1: Directory path
+# Returns: 0 if exists, 1 if not
+function check_directory_exists() {
+    local dir_path="$1"
+    if [ -d "${dir_path}" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Function: check_file_exists
+# Purpose: Check if a file exists
+# Parameters:
+#   $1: File path
+# Returns: 0 if exists, 1 if not
+function check_file_exists() {
+    local file_path="$1"
+    if [ -f "${file_path}" ]; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 # Function: run_openapi_generation
@@ -105,8 +135,38 @@ function run_openapi_generation() {
     local operation="$1"
     local additional_params="$2"
     
+    # Verify OpenAPI directory exists
+    if ! check_directory_exists "${OPENAPI_DIR}"; then
+        log "${LOG_WARN}" "${operation}: OpenAPI directory not found, skipping generation"
+        return 0
+    fi
+    
+    # Verify index.yml exists
+    if ! check_file_exists "${OPENAPI_DIR}/index.yml"; then
+        log "${LOG_WARN}" "${operation}: OpenAPI index.yml not found, skipping generation"
+        return 0
+    fi
+    
+    # Verify client directory and config exist
+    if ! check_directory_exists "${PROJECT_DIR}/client"; then
+        log "${LOG_WARN}" "${operation}: Client directory not found, creating it"
+        mkdir -p "${PROJECT_DIR}/client"
+    fi
+    
+    # Check if Docker socket is available
+    if ! check_file_exists "${DOCKER_SOCKET}"; then
+        log "${LOG_WARN}" "${operation}: Docker socket not available, skipping OpenAPI generation"
+        return 0
+    fi
+    
+    # Check if Docker is running
+    if ! docker info >/dev/null 2>&1; then
+        log "${LOG_WARN}" "${operation}: Docker daemon not running, skipping OpenAPI generation"
+        return 0
+    fi
+    
     local base_command="docker run --user $(id -u):$(id -g) --rm \
--v ${WORKSPACE_DIR}:/client \
+-v ${PROJECT_DIR}:/client \
 -v ${OPENAPI_DIR}:/definitions \
 openapitools/openapi-generator-cli:${OPENAPI_GENERATOR_VERSION} generate \
 -i /definitions/index.yml \
@@ -120,6 +180,7 @@ openapitools/openapi-generator-cli:${OPENAPI_GENERATOR_VERSION} generate \
     fi
     
     execute "${base_command}" "${operation}"
+    return 0
 }
 
 # Function: setup_environment
@@ -129,42 +190,63 @@ openapitools/openapi-generator-cli:${OPENAPI_GENERATOR_VERSION} generate \
 function setup_environment() {
     log "${LOG_INFO}" "${OP_SETUP_BEGIN}: Container initialization started"
     
-    cd "${WORKSPACE_DIR}"
+    # Change to workspace directory safely
+    cd "${PROJECT_DIR}" || {
+        log "${LOG_ERROR}" "Failed to change to workspace directory"
+        # Continue anyway
+    }
     
     # Setup phase
-    execute "chmod +x gradlew" "${OP_PERMISSIONS}"
-    execute "mkdir -p ${RESOURCES_DIR}" "${OP_DIRECTORY}"
-    
-    if [ -e "${DOCKER_SOCKET}" ]; then
-        execute "chmod 666 ${DOCKER_SOCKET}" "${OP_DOCKER_SOCKET}"
+    if check_file_exists "${PROJECT_DIR}/gradlew"; then
+        execute "chmod +x gradlew" "${OP_PERMISSIONS}"
+    else
+        log "${LOG_WARN}" "${OP_PERMISSIONS}: gradlew not found, skipping permissions"
     fi
     
-    # OpenAPI generation phase
+    execute "mkdir -p ${RESOURCES_DIR}" "${OP_DIRECTORY}"
+    
+    if check_file_exists "${DOCKER_SOCKET}"; then
+        execute "chmod 666 ${DOCKER_SOCKET}" "${OP_DOCKER_SOCKET}"
+    else
+        log "${LOG_WARN}" "${OP_DOCKER_SOCKET}: Docker socket not found, skipping permissions"
+    fi
+    
+    # OpenAPI generation phase - only if necessary conditions are met
     run_openapi_generation "${OP_OPENAPI_GEN_FIRST}"
     run_openapi_generation "${OP_OPENAPI_GEN_SECOND}" "--import-mappings \"${ENUM_MAPPINGS}\""
     
     # Build phase
-    if command -v ./gradlew &>/dev/null; then
-        execute "./gradlew -p ./ goJF" "${OP_CODE_FORMAT}"
+    if check_file_exists "${PROJECT_DIR}/gradlew"; then
+        if command -v ./gradlew &>/dev/null; then
+            execute "./gradlew -p ./ goJF" "${OP_CODE_FORMAT}"
+            execute "./gradlew --no-daemon build -x test" "${OP_BUILD}"
+        else
+            log "${LOG_WARN}" "Gradle wrapper found but not executable, skipping build"
+        fi
+    else
+        log "${LOG_WARN}" "Gradle wrapper not found, skipping build"
     fi
-    
-    execute "./gradlew --no-daemon build -x test" "${OP_BUILD}"
     
     # Cleanup phase
     log "${LOG_INFO}" "${OP_SETUP_COMPLETE}: Container initialization finished"
-    rm "${SETUP_FLAG_FILE}"
+    if check_file_exists "${SETUP_FLAG_FILE}"; then
+        execute "rm ${SETUP_FLAG_FILE}" "CLEANUP"
+    fi
 }
 
 #===============================================================================
 # MAIN EXECUTION BLOCK
 #===============================================================================
 
-# Setup global error handler (like try/catch for the entire script)
-trap 'log "${LOG_ERROR}" "Command \"${BASH_COMMAND}\" failed with exit code $?"' ERR
+# Setup safer error handler that logs but doesn't terminate the script
+trap 'log "${LOG_ERROR}" "Command \"${BASH_COMMAND}\" failed with exit code $?, continuing"' ERR
 
 # Determine if setup is needed (main branching logic)
-if [ -f "${SETUP_FLAG_FILE}" ]; then
-    setup_environment
+if check_file_exists "${SETUP_FLAG_FILE}"; then
+    # Run setup but catch any errors to prevent container from failing
+    setup_environment || {
+        log "${LOG_ERROR}" "Setup failed, but container will continue running"
+    }
 else
     log "${LOG_INFO}" "${OP_CONTAINER_READY}: Setup already completed"
 fi
