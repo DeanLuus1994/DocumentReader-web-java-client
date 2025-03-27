@@ -7,22 +7,17 @@ if [ -f "/tmp/needs_setup" ]; then
     
     cd /workspaces/DocumentReader-web-java-client
     
-    # Make executable
+    # Make scripts executable and create resources dir
     chmod +x gradlew update-models.sh
-    
-    # Create test resources directory
     mkdir -p example/src/main/resources
     
     # Fix Docker socket permissions
-    if [ -e /var/run/docker.sock ]; then
-        chmod 666 /var/run/docker.sock
-    fi
+    [ -e /var/run/docker.sock ] && chmod 666 /var/run/docker.sock
     
-    # Generate models from existing cloned OpenAPI definitions
-    echo "📦 Generating models from OpenAPI definitions in ../DocumentReader-web-openapi..."
+    # Generate models and build project
+    echo "📦 Generating models from OpenAPI definitions..."
     ./update-models.sh || echo "⚠️ Model generation failed but continuing"
     
-    # Build project
     echo "🔨 Building project with Gradle..."
     ./gradlew --no-daemon build -x test || echo "⚠️ Build failed but continuing"
     
