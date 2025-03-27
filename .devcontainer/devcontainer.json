@@ -1,12 +1,13 @@
 {
-	"name": "Java",
+	"name": "Java - Optimized",
 	"image": "mcr.microsoft.com/devcontainers/java:17",
 	"features": {
 		"ghcr.io/devcontainers/features/java:1": {
 			"version": "17",
-			"installMaven": "false",
-			"installGradle": "true"
-		}
+			"installMaven": false,
+			"installGradle": true
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:1": {}
 	},
 	"customizations": {
 		"vscode": {
@@ -15,5 +16,14 @@
 			]
 		}
 	},
-	"remoteUser": "vscode"
+	"runArgs": [
+		"--privileged"
+	],
+	"mounts": [
+		"source=${localEnv:HOME}/.gradle,target=/home/vscode/.gradle,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.m2,target=/home/vscode/.m2,type=bind,consistency=cached"
+	],
+	"remoteUser": "vscode",
+	// Optional: Run a command after the container is created to show Gradle version (ensures caches are created)
+	"postCreateCommand": "gradle --version"
 }

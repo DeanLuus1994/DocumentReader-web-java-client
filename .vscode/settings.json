@@ -1,3 +1,36 @@
 {
-    "java.compile.nullAnalysis.mode": "automatic"
+    // Java configuration for full diagnostics and performance
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.errors.incompleteClasspath.severity": "error",
+    // Full editor features enabled for maximum IntelliSense, visualization, and navigation
+    "editor.minimap.enabled": true,
+    "editor.renderWhitespace": "all",
+    "editor.quickSuggestionsDelay": 10,
+    "editor.tabSize": 4,
+    "editor.suggestSelection": "first",
+    "editor.parameterHints.enabled": true,
+    "editor.fontLigatures": true,
+    "editor.codeLens": true,
+    "editor.inlineHints.enabled": true,
+    // GitHub Copilot settings for best possible context awareness and performance
+    "github.copilot.enable": true,
+    "github.copilot.editor.enableAutoCompletions": true,
+    "github.copilot.advanced": {
+        "contextualMode": true
+    },
+    "github.copilot.experimental": {
+        "advanced": true
+    },
+    // Attempt to reduce suggestion delay to near-zero latency
+    "github.copilot.suggestionDelay": 0,
+    // Enable all semantic processing if supported for richer suggestions
+    "github.copilot.enableSemantic": true,
+    // Increasing the available memory for the Java language server to ensure smooth performance
+    "java.jdt.ls.vmargs": "-noverify -Xmx4G -XX:+UseG1GC -XX:+UseStringDeduplication",
+    "github.copilot.chat.generateTests.codeLens": true,
+    "github.copilot.chat.edits.temporalContext.enabled": true,
+    "github.copilot.chat.editor.temporalContext.enabled": true,
+    "github.copilot.chat.edits.codesearch.enabled": true,
+    "github.copilot.nextEditSuggestions.enabled": true
 }
