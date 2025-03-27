@@ -1,5 +1,4 @@
 # syntax=docker/dockerfile:1.4
-# filepath: /workspaces/DocumentReader-web-java-client/.devcontainer/Dockerfile
 
 FROM mcr.microsoft.com/devcontainers/java:17 AS build
 WORKDIR /workspace
@@ -11,7 +10,7 @@ RUN mkdir -p ${GRADLE_USER_HOME}
 # Copy Gradle wrapper and build scripts separately to leverage caching
 COPY gradlew .
 COPY gradle gradle
-COPY build.gradle settings.gradle ./
+COPY build.gradle settings.gradle.kts ./
 RUN chmod +x gradlew
 
 # Pre-cache Gradle dependencies (inline caching)  
@@ -25,7 +24,7 @@ COPY . .
 # Ensure scripts are executable
 RUN chmod +x ./update-models.sh ./setup-and-test-regula.sh
 
-# 1) Generate the models during the build  
+# 1) Generate the models during the build
 RUN --mount=type=cache,target=/home/vscode/.gradle/caches \
     --mount=type=cache,target=/home/vscode/.gradle/wrapper \
     ./update-models.sh
