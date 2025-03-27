@@ -9,7 +9,7 @@
 # Last updated: 2025/03/27
 #===============================================================================
 
-version: '3.8'
+# Version directive removed as it's obsolete in newer Docker Compose versions
 
 services:
   dev:

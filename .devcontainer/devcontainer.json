@@ -23,5 +23,6 @@
         }
     },
     "remoteUser": "vscode",
-    "initializeCommand": "echo 'Starting dev container setup...'"
+    "initializeCommand": "echo 'Starting dev container setup...'",
+    "postCreateCommand": "chmod +x .devcontainer/entrypoint.sh .devcontainer/scripts/*.sh gradlew"
 }

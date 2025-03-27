@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# Copyright © 2015-2021 the original authors.
+# Copyright Â© 2015-2021 the original authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,30 +32,34 @@
 #       Busybox and similar reduced shells will NOT work, because this script
 #       requires all of these POSIX shell features:
 #         * functions;
-#         * expansions «$var», «${var}», «${var:-default}», «${var+SET}»,
-#           «${var#prefix}», «${var%suffix}», and «$( cmd )»;
-#         * compound commands having a testable exit status, especially «case»;
-#         * various built-in commands including «command», «set», and «ulimit».
+#         * expansions Â«$varÂ», Â«${var}Â», Â«${var:-default}Â», Â«${var+SET}Â»,
+#           Â«${var#prefix}Â», Â«${var%suffix}Â», and Â«$( cmd )Â»;
+#         * compound commands having a testable exit status, especially Â«caseÂ»;
+#         * various built-in commands including Â«commandÂ», Â«setÂ», and Â«ulimitÂ».
 #
 #   Important for patching:
 #
-#   (2) This script targets any POSIX shell, so it avoids extensions provided
-#       by Bash, Ksh, etc; in particular arrays are avoided.
+#   (2) This script targets any POSIX shell, not just bash or ksh, so it avoids
+#       extensions provided by such shells. See
+#       https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html
+#       for details about what POSIX shells must support.
 #
-#       The "traditional" practice of packing multiple parameters into a
-#       space-separated string is a well documented source of bugs and security
-#       problems, so this is (mostly) avoided, by progressively accumulating
-#       options in "$@", and eventually passing that to Java.
+#       In particular, the following features are NOT used in this script:
+#         * pattern replacement Â«${var/pattern/replacement}Â»
+#         * declaring arrays
+#         * using arrays other than "$@"
+#         * declaring integers or otherwise doing integer arithemtic
+#         * let or $(( )) or $([ ]) or [[ ]]
+#         * process substitution <( cmd )
+#         * extended globbing or regular expressions
 #
-#       Where the inherited environment variables (DEFAULT_JVM_OPTS, JAVA_OPTS,
-#       and GRADLE_OPTS) rely on word-splitting, this is performed explicitly;
-#       see the in-line comments for details.
-#
-#       There are tweaks for specific operating systems such as AIX, CygWin,
-#       Darwin, MinGW, and NonStop.
+#       This script can be tested by running it hurts to test this script with bash invoked
+#       with its POSIX compatibility flag, but bash in POSIX mode has bugs that cause
+#       some scripts to fail, while other shells like dash don't have those bugs.
+#       So this script is tested against dash.
 #
 #   (3) This script is generated from the Groovy template
-#       https://github.com/gradle/gradle/blob/master/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
+#       https://github.com/gradle/gradle/blob/HEAD/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
 #       within the Gradle project.
 #
 #       You can find Gradle at https://github.com/gradle/gradle/.
@@ -80,13 +84,17 @@ do
     esac
 done
 
+# Set up default Java memory settings
+DEFAULT_JVM_OPTS='"-Xmx128m" "-Xms64m"'
+
 APP_HOME=$( cd "${APP_HOME:-./}" && pwd -P ) || exit
 
 APP_NAME="Gradle"
 APP_BASE_NAME=${0##*/}
 
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+# DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'  # Original value
+# Increased memory limits to handle larger builds while staying conservative
 
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD=maximum

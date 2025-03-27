@@ -27,5 +27,9 @@ portrait.jpg
 /example/src/main/resources/regula.license
 /Dockerfile
 
+# Explicitly ensure .devcontainer is included
+!.devcontainer/
+!.devcontainer/*
+
 # Generated code
 client/src/main/generated/
