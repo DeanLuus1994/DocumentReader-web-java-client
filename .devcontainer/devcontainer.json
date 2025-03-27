@@ -1,4 +1,5 @@
 {
+    "$schema": "https://json.schemastore.org/devcontainer.json",
     "name": "DocumentReader Web Java Client",
     "dockerComposeFile": [
         "docker-compose.yml"
@@ -12,17 +13,103 @@
                 "vscjava.vscode-gradle",
                 "redhat.java",
                 "vmware.vscode-boot-dev-pack",
-                "github.copilot"
+                "github.copilot",
+                "sonarsource.sonarlint-vscode",
+                "eamodio.gitlens",
+                "ms-azuretools.vscode-docker",
+                "redhat.vscode-yaml",
+                "ms-vscode.test-adapter-converter",
+                "streetsidesoftware.code-spell-checker",
+                "ryanluker.vscode-coverage-gutters",
+                "shengchen.vscode-checkstyle",
+                "vscjava.vscode-java-debug",
+                "vscjava.vscode-java-test",
+                "vscjava.vscode-maven",
+                "cweijan.vscode-mysql-client2",
+                "emeraldwalk.RunOnSave",
+                "yzhang.markdown-all-in-one"
             ],
             "settings": {
                 "java.configuration.updateBuildConfiguration": "automatic",
                 "java.compile.nullAnalysis.mode": "automatic",
                 "java.format.enabled": true,
-                "editor.formatOnSave": true
+                "editor.formatOnSave": true,
+                "java.test.config": {
+                    "vmArgs": [
+                        "-Xmx1G",
+                        "-XX:+UseG1GC"
+                    ]
+                },
+                "java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m",
+                "java.import.gradle.java.home": "/opt/java/openjdk",
+                "java.import.maven.enabled": true,
+                "java.completion.favoriteStaticMembers": [
+                    "org.junit.Assert.*",
+                    "org.junit.Assume.*",
+                    "org.junit.jupiter.api.Assertions.*",
+                    "org.junit.jupiter.api.Assumptions.*",
+                    "org.junit.jupiter.api.DynamicContainer.*",
+                    "org.junit.jupiter.api.DynamicTest.*",
+                    "org.mockito.Mockito.*",
+                    "org.mockito.ArgumentMatchers.*",
+                    "org.mockito.Answers.*"
+                ],
+                "sonarlint.disableTelemetry": true,
+                "redhat.telemetry.enabled": false,
+                "telemetry.telemetryLevel": "off",
+                "git.autofetch": true,
+                "git.confirmSync": false,
+                "editor.bracketPairColorization.enabled": true,
+                "editor.guides.bracketPairs": "active",
+                "terminal.integrated.defaultProfile.linux": "bash"
             }
         }
     },
     "remoteUser": "vscode",
-    "initializeCommand": "echo 'Starting dev container setup...'",
-    "postCreateCommand": "chmod +x .devcontainer/entrypoint.sh .devcontainer/scripts/*.sh gradlew"
+    "initializeCommand": [
+        "bash",
+        "-c",
+        "echo 'Starting enterprise dev container setup at $(date)' && mkdir -p ~/.cache/devcontainer"
+    ],
+    "postCreateCommand": [
+        "bash",
+        "-c",
+        "chmod +x .devcontainer/entrypoint.sh .devcontainer/scripts/*.sh gradlew && echo 'Environment verification:' && java -version && gradle --version && docker --version"
+    ],
+    "postStartCommand": [
+        "bash",
+        "-c",
+        "echo 'Setting up git hooks...' && mkdir -p .git/hooks && cp -f .devcontainer/scripts/pre-commit.sh .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit"
+    ],
+    "mounts": [
+        "source=vscode-extensions,target=/home/vscode/.vscode-server/extensions,type=volume",
+        "source=vscode-extensions-insiders,target=/home/vscode/.vscode-server-insiders/extensions,type=volume",
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+    ],
+    "features": {
+        "ghcr.io/devcontainers/features/java:1": {
+            "version": "none",
+            "installMaven": "false",
+            "installGradle": "false"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "moby": true,
+            "dockerDashComposeVersion": "v2"
+        },
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest",
+            "ppa": false
+        }
+    },
+    "forwardPorts": [
+        8080,
+        8443
+    ],
+    "otherPortsAttributes": {
+        "onAutoForward": "silent"
+    },
+    "waitFor": "onCreateCommand",
+    "updateContentCommand": "gradle --refresh-dependencies",
+    "shutdownAction": "stopContainer"
 }
