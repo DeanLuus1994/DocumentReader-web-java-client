@@ -2,6 +2,7 @@
     "name": "Java - Optimized",
     "dockerComposeFile": "docker-compose.yml",
     "service": "dev",
+    "workspaceFolder": "/workspaces/DocumentReader-web-java-client",
     "customizations": {
         "vscode": {
             "extensions": [
